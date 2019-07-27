@@ -7,18 +7,23 @@ class Service(object):
     _MOVIE_FILENAME = "title.basics.tsv"
     _RATING_FILENAME = "title.ratings.tsv"
 
-    def __init__(self, base_url, refresh_interval, min_votes):
+    def __init__(self, base_url, refresh_interval, min_votes, local_movie_file="", loca_rating_file=""):
         self.base_url = base_url
         self.refresh_interval = refresh_interval
         self.min_votes = min_votes
+        self.local_movie_file = local_movie_file
+        self.local_rating_file = loca_rating_file
         self.movie_list = []
         self.update_time = None
 
     def _FetchFile(self, base_url, filename):
         """Download gz file and unzip it."""
+        logging.info("Downloading %s" % filename)
         response = urllib.request.urlopen(base_url + filename + ".gz")
+        logging.info("Decompressing %s" % filename)
         with open(filename, 'wb') as outfile:
             outfile.write(gzip.decompress(response.read()))
+
 
     def GetRating(self, movie_names):
         """
@@ -52,15 +57,17 @@ class Service(object):
             if delta_time.seconds < self.refresh_interval:
                 return
         logging.info("Refreshing imdb data")
-        self._FetchFile(self.base_url, self._MOVIE_FILENAME)
-        self._FetchFile(self.base_url, self._RATING_FILENAME)
+        if self.local_movie_file == "":
+            self._FetchFile(self.base_url, self._MOVIE_FILENAME)
+        if self.local_rating_file == "":
+            self._FetchFile(self.base_url, self._RATING_FILENAME)
         self.update_time = datetime.datetime.now()
         self.movie_list = self._LoadMovies(self._LoadRatings())
 
     def _LoadRatings(self):
         """Loads the movie ratings."""
         ratings = {}
-        with open(self._RATING_FILENAME) as ratings_file:
+        with open(self.local_rating_file or self._RATING_FILENAME) as ratings_file:
             # The first line of the file is the header.
             # We read it and ignore.
             ratings_file.readline()
@@ -80,7 +87,7 @@ class Service(object):
         :return: A list of movies with ratings.
         """
         movie_list = []
-        with open(self._MOVIE_FILENAME) as movie_file:
+        with open(self.local_movie_file or self._MOVIE_FILENAME) as movie_file:
             # The first line of the file is the header.
             # We read it and ignore.
             movie_file.readline()

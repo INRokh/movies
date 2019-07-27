@@ -57,7 +57,8 @@ def main(argv):
     shutdown_handler = GracefulShutdown()
     signal.signal(signal.SIGTERM, shutdown_handler.exit)
 
-    movie_service = imdb.Service(FLAGS.imdb_base_url, FLAGS.imdb_refresh_interval, FLAGS.min_votes)
+    movie_service = imdb.Service(FLAGS.imdb_base_url, FLAGS.imdb_refresh_interval,
+                                 FLAGS.min_votes, FLAGS.movie_file, FLAGS.rating_file)
 
     sheet_last_update = ""
 
