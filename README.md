@@ -12,13 +12,12 @@ $ wget https://datasets.imdbws.com/title.ratings.tsv.gz
 2. Unzip the files:
 $ ungzip *.gz
 3. Update available Linux packages:
-$ apt update
+$ sudo apt update
 4. Install pip for python3 using sudo:
 $ sudo apt install python3-pip
-5. Install Google Sheets dependencies:
-$ pip3 install --upgrade google-api-python-client /
-google-auth-httplib2 google-auth-oauthlib
-6. Upload sctip files to the VM using Google Cloud Console UI or `scp`
+5. Upload script files to the VM using Google Cloud Console UI or `scp`
+6. Install Google Sheets dependencies:
+$ pip3 install -r requirements.txt --upgrade 
 7. Start service:
 python3 service.py
 
