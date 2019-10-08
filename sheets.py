@@ -1,7 +1,7 @@
 from googleapiclient.discovery import build
 
 READ_RANGE = 'Sheet1!A2:A'
-WRITE_RANGE = "Sheet1!B3:L"
+WRITE_RANGE = "Sheet1!B2:L"
 
 def BuildService(creds):
     """Creates a client for Sheets API.
@@ -25,7 +25,8 @@ def ReadMovieNames(service, sheet_id):
     values = result.get('values', [])
     result = []
     for row in values:
-        result.append(row[0])
+        if len(row) > 0:
+            result.append(row[0])
     return result
 
 def WriteMovieInfo(info, service, sheet_id):
