@@ -12,7 +12,6 @@ import google.cloud.logging as gcp_logging
 import google.auth
 
 SCOPE = [
-    "https://www.googleapis.com/auth/logging.read",
     "https://www.googleapis.com/auth/logging.write",
     "https://www.googleapis.com/auth/spreadsheets",
 ]
