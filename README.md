@@ -1,42 +1,40 @@
-# movies
-To create a VM do the following:
+# Movie Ratings
+
+Service allowing to get IMDB ratings for a batch of movies you are considering to watch.
+
+# Deployment to Google Cloud
+
+## Create VM
+
 1. Create new project in GCP.
-2. Enable Google Sheets API.
-3. Create a small (f1-mini) Virtual Machine.
-4. Create or use existing service account and download secret.json (APIs & Services - Credentials)
+1. Enable Google Sheets API.
+1. Create a small (f1-mini) Virtual Machine installing the latest stable Container OS.
+1. Before starting VM add sheets scope running in Cloud Shell: 
 
-To deploy the service to a Ubuntu VM do the following:
-Download movie files:
-```
-$ wget https://datasets.imdbws.com/title.basics.tsv.gz
-$ wget https://datasets.imdbws.com/title.ratings.tsv.gz
-```
-Unzip the files:
-```
-$ ungzip *.gz
-```
-Update available Linux packages:
-```
-$ sudo apt update
-```
-Install pip for python3 using sudo:
-```
-$ sudo apt install python3-pip
-```
-Upload script files to the VM using Google Cloud Console UI or `scp`
-Install Google Sheets dependencies:
-```
-$ pip3 install -r requirements.txt --upgrade 
-```
-Start service:
-```
-python3 service.py
+```shell
+gcloud beta compute instances set-scopes <instance-name> --scopes=default,https://www.googleapis.com/auth/spreadsheets --zone=<instance-zone>
 ```
 
-Use command `top` to monitor CPU and memory usage. Press `q` to quit.
-Use command `exit` to close the session to VM. This will stop the
-service as well. If you want to keep service running start it like this:
+## Create Google Sheet
+
+1. Create a new Google Sheet to use as input and output.
+1. Give GCP service account (compute) to the sheet.
+
+## Run container
+
+1. SSH into the VM.
+2. Clone this repository and cd into it:
+```shell
+git clone https://github.com/INRokh/movies.git
+
+cd movies
 ```
-$ nohup python3 service.py &
+3. Modify Docker file overriding existing flags (you at least will need to set your sheet ID).
+4. Build the image: 
+```shell
+docker build --tag=movies .
 ```
-Use kill PID to exit gracefully.
+5. Run the container:
+```shell
+docker run -d movies
+```
