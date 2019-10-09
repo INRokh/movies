@@ -8,8 +8,8 @@ import util
 
 from absl import app
 from absl import flags
-from google.oauth2 import service_account
 import google.cloud.logging as gcp_logging
+import google.auth
 
 SCOPE = [
     "https://www.googleapis.com/auth/logging.read",
@@ -34,11 +34,9 @@ flags.DEFINE_integer("polling_interval", 60,
 
 def main(argv):
     del argv  # Unused
+    creds, project_id = google.auth.default(scopes=SCOPE)
 
-    creds = service_account.Credentials.from_service_account_file(
-        FLAGS.api_secret, scopes=SCOPE)
-
-    logging_client = gcp_logging.Client(project=creds.project_id, credentials=creds)
+    logging_client = gcp_logging.Client(project=project_id, credentials=creds)
     logging_client.setup_logging(log_level=logging.INFO)
 
     movie_service = imdb.Service(FLAGS.min_votes, FLAGS.movie_file, FLAGS.rating_file)
