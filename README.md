@@ -34,7 +34,7 @@ cd movies
 ```shell
 docker build --tag=movies .
 ```
-5. Run the container:
+5. Run the container as a daemon:
 ```shell
-docker run -d movies
+docker run -d --restart unless-stopped movies
 ```
